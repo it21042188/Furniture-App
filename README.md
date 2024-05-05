@@ -49,3 +49,58 @@ process.stdin.on("end", function () {
    processData(_input);
 });
 
+---------------------------------
+
+function bankAccount(balance) {
+    return {
+        deposit: function(amount) {
+            balance += amount;
+            return balance;
+        },
+        withdraw: function(amount) {
+            balance -= amount;
+            return balance;
+        },
+        getBalance: function() {
+            return balance;
+        }
+    };
+}
+
+// Input handling
+process.stdin.resume();
+process.stdin.setEncoding("ascii");
+let _input = "";
+
+process.stdin.on("data", function (input) {
+    _input += input;
+});
+
+process.stdin.on("end", function () {
+    const inputArray = _input.trim().split('\n');
+    const initialBalance = parseInt(inputArray[0]);
+    const actions = inputArray.slice(1);
+
+    const account = bankAccount(initialBalance);
+    let result = [];
+
+    actions.forEach(action => {
+        const parts = action.split('(');
+        const method = parts[0];
+        const amount = parseInt(parts[1].split(')')[0]);
+        
+        if (method === 'withdraw') {
+            account.withdraw(amount);
+        } else if (method === 'deposit') {
+            account.deposit(amount);
+        } else if (method === 'getBalance') {
+            result.push(account.getBalance());
+        }
+    });
+
+    result.forEach(balance => {
+        console.log(balance);
+    });
+});
+
+
